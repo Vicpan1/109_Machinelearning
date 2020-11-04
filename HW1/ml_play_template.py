@@ -45,27 +45,37 @@ def ml_loop():
                 ball_right = False
                 
         now_platform_positionX = scene_info.platform[0] + 20
-        print(now_ball_position[1] , past_ball_position , now_platform_positionX)
+        print(now_platform_positionX , now_ball_position)
         if ball_down == True and now_ball_position[1] > 280:
             m = (now_ball_position[1] - past_ball_position[1]) / (now_ball_position[0] - past_ball_position[0])
-            aid = now_ball_position[0] - ((now_ball_position[1] - 395) / m)
-            if aid < 0:
-                aid = -aid
-            elif aid > 200:
-                aid = 200 - (aid - 200)
+            res = now_ball_position[0] - ((now_ball_position[1] - 395) / m)
+            if res < 0:
+                res = -res
+            elif res > 200:
+                res = 200 - (res - 200)
         else:
-            aid = 100
+            res = 100
             
         if ball_down == False and now_ball_position[1] > 280:
-            if now_ball_position[0] > 160 and ball_right == True:
+            if now_ball_position[0] > 150:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-            elif now_ball_position[0] < 40 and ball_right == False:
+            elif now_ball_position[0] < 50:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
             else:
-                if now_platform_positionX > 100:
+                if now_platform_positionX > 140:
                     if now_ball_position[0] > now_platform_positionX + 20:
                         comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
                     if now_ball_position[0] < now_platform_positionX + 20:
+                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
+                elif 140 > now_platform_positionX > 100:
+                    if now_ball_position[0] > now_platform_positionX + 10:
+                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
+                    if now_ball_position[0] < now_platform_positionX + 10:
+                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
+                elif 100 > now_platform_positionX > 60:
+                    if now_ball_position[0] > now_platform_positionX - 10:
+                        comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
+                    if now_ball_position[0] < now_platform_positionX - 10:
                         comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
                 else:
                     if now_ball_position[0] > now_platform_positionX - 20:
@@ -73,11 +83,11 @@ def ml_loop():
                     if now_ball_position[0] < now_platform_positionX - 20:
                         comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
         else:
-            if aid > now_platform_positionX:
+            if res > now_platform_positionX:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_RIGHT)
-            if aid < now_platform_positionX:
+            if res < now_platform_positionX:
                 comm.send_instruction(scene_info.frame, PlatformAction.MOVE_LEFT)
-            if aid == now_platform_positionX:
+            if res == now_platform_positionX:
                 comm.send_instruction(scene_info.frame, PlatformAction.NONE)
             
         past_ball_position = now_ball_position
